@@ -65,8 +65,15 @@ const watchers = [
     },
   ),
   watch(
-    import.meta.dirname + "/index.html",
-    reloadAllClients,
+    import.meta.dirname,
+    { recursive: true },
+    (event, filename) => {
+      if (!filename || !filename.endsWith(".html")) {
+        return;
+      }
+      console.log("File changed: " + filename);
+      reloadAllClients();
+    },
   ),
 ];
 
