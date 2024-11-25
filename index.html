@@ -9,5 +9,195 @@
     <h1>Testing JS Plugin</h1>
     <script src="/dist/plugin.js"></script>
     <script src="/dist/autoreload.js"></script>
+
+    <style>
+        .modal {
+            position: absolute;
+            width: 250px;
+            background-color: #333;
+            padding-top: 0px;
+
+            color: #fff;
+        }
+
+        .modal .drag-handle.close {
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            height: 20px;
+            background-color: #444;
+
+            color: #fff;
+            cursor: move;
+        }
+
+        .modal .drag-handle.close:after {
+            content: "x";
+            padding-right: 10px;
+        }
+
+        .modal .content {
+            padding: 20px;
+            padding-right: 15px;
+        }
+
+        .modal .title {
+            font-weight: normal;
+        }
+
+        .modal .content .back {
+            display: flex;
+            justify-content: row;
+            gap: 10px;
+
+            font-weight: bold;
+        }
+
+        .modal .actions, .modal .dialog {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            padding-top: 10px;
+        }
+
+        .modal .actions .action {
+            padding: 0.5rem;
+            padding-right: 1rem;
+            background: #444;
+            display: flex;
+            justify-content: space-between;
+            span {
+                font-weight: bold;
+            }
+        }
+
+        .modal a {
+            cursor: pointer;
+        }
+
+        .modal .btn {
+            padding: 0.5rem;
+            background: #444;
+            text-align: end;
+        }
+
+        .modal div.input {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal div.input.ok {
+            .validation {
+                color: #0b0;
+            }
+        }
+        .modal div.input.error {
+            .validation {
+                color: #e00;
+            }
+        }
+    </style>
+
+    <div class="modal" style="top: 50px; left: 50px;">
+        <a class="drag-handle close"></a>
+        <div class="content">
+            <span class="title">Tooltip</span>
+            <div class="actions">
+                <div class="action">
+                    Action 1
+                    <span>&gt;</span>
+                </div>
+                <div class="action">
+                    Action 2
+                    <span>&gt;</span>
+                </div>
+                <div class="action">
+                    Action 3
+                    <span>&gt;</span>
+                </div>
+                <div class="action">
+                    Action 4
+                    <span>&gt;</span>
+                </div>
+                <div class="action">
+                    Action 5
+                    <span>&gt;</span>
+                </div>
+                <div class="action">
+                    Action 6
+                    <span>&gt;</span>
+                </div>
+                <div class="action">
+                    Action 7
+                    <span>&gt;</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" style="top: 50px; left: 310px;">
+        <a class="drag-handle close"></a>
+        <div class="content">
+            <a class="back">
+                &lt;
+                <span class="title">Tooltip/action</span>
+            </a>
+            <div class="actions">
+                <div class="action">
+                    Action 1
+                    <span>&gt;</span>
+                </div>
+                <div class="action">
+                    Action 2
+                    <span>&gt;</span>
+                </div>
+                <div class="action">
+                    Action 3
+                    <span>&gt;</span>
+                </div>
+                <div class="action">
+                    Action 4
+                    <span>&gt;</span>
+                </div>
+                <div class="action">
+                    Action 5
+                    <span>&#9658;</span>
+                </div>
+                <div class="action">
+                    Action 6
+                    <span>&#9658;</span>
+                </div>
+                <div class="action">
+                    Action 7
+                    <span>&#9658;</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" style="top: 50px; left: 570px;">
+        <a class="drag-handle close"></a>
+        <div class="content">
+            <a class="back">
+                &lt;
+                <span class="title">Tooltip/action</span>
+            </a>
+            <div class="dialog">
+                <div class="input ok">
+                    <label>Input</label>
+                    <input type="text" placeholder="Hello World" />
+                    <label class="validation">Great</label>
+                </div>
+                <div class="input error">
+                    <label>Input</label>
+                    <input type="text" placeholder="Hello World" />
+                    <label class="validation">Error</label>
+                </div>
+                <a class="btn btn-play">&#9658;</a>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
