@@ -79,21 +79,70 @@ const tooltipButton = () => {
   });
 };
 
+const updateModalContent = (content: HTMLElement, {
+  title,
+  canGoBack,
+  actions
+}: any) => {
+  if (content.hasChildNodes()) {
+    content.innerHTML = "";
+  }
+  {
+    const titleEl = document.createElement("span");
+    titleEl.classList.add("title");
+    titleEl.textContent = title;
+    if (canGoBack) {
+      const backBtn = document.createElement("a");
+      backBtn.classList.add("back");
+      backBtn.textContent = "<";
+      backBtn.addEventListener("click", canGoBack);
+      backBtn.appendChild(titleEl);
+      content.appendChild(backBtn);
+    }
+    else {
+      content.appendChild(titleEl);
+    }
+  }
+  const actionsDiv = document.createElement("div");
+  actionsDiv.classList.add("actions");
+  if (actions && actions.length > 0) {
+    for (const action of actions) {
+      const actionEl = document.createElement("a");
+      actionEl.classList.add("action");
+      actionEl.textContent = action.text;
+      const icon = document.createElement("span");
+      switch (action.type) {
+        case "tooltip":
+          icon.innerHTML = "&gt;";
+          break;
+        case "action":
+          icon.innerHTML = "&#9658;";
+          break;
+        default:
+          console.warn("Invalid action type:", action.type);
+          continue;
+      }
+      if (action.action) {
+        actionEl.addEventListener("click", action.action);
+      }
+      actionEl.appendChild(icon);
+      actionsDiv.appendChild(actionEl);
+    }
+  }
+  content.appendChild(actionsDiv);
+};
+
 const tooltipModal = () => {
   const ID = "jkutkut/tooltip-modal";
 
   return getElementByIdOr(ID, () => {
-    const {
-      onClose,
-      title,
-      canGoBack,
-      actions
-    } = {
-      onClose: (e: MouseEvent) => {
-        e.preventDefault();
-        modal.style.display = "none";
-        return false;
-      },
+    const onClose = (e: MouseEvent) => {
+      e.preventDefault();
+      modal.style.display = "none";
+      // TODO
+      return false;
+    };
+    const data = {
       canGoBack: null,
       // canGoBack: () => {
       //   console.log("Going back");
@@ -133,64 +182,15 @@ const tooltipModal = () => {
       closeBtn.addEventListener("click", onClose);
     }
 
-    {
-      const content = document.createElement("div");
-      content.classList.add("content");
-      {
-        const titleEl = document.createElement("span");
-        titleEl.classList.add("title");
-        titleEl.textContent = title;
-        if (canGoBack) {
-          const backBtn = document.createElement("a");
-          backBtn.classList.add("back");
-          backBtn.textContent = "<";
-          backBtn.addEventListener("click", canGoBack);
-          backBtn.appendChild(titleEl);
-          content.appendChild(backBtn);
-        }
-        else {
-          content.appendChild(titleEl);
-        }
-      }
-      const actionsDiv = document.createElement("div");
-      actionsDiv.classList.add("actions");
-      {
-        for (const action of actions) {
-          const actionEl = document.createElement("a");
-          actionEl.classList.add("action");
-          actionEl.textContent = action.text;
-          const icon = document.createElement("span");
-          switch (action.type) {
-            case "tooltip":
-              icon.innerHTML = "&gt;";
-              break;
-            case "action":
-              icon.innerHTML = "&#9658;";
-              break;
-            default:
-              console.warn("Invalid action type:", action.type);
-              continue;
-          }
-          if (action.action) {
-            actionEl.addEventListener("click", action.action);
-          }
-          actionEl.appendChild(icon);
-          actionsDiv.appendChild(actionEl);
-        }
-      }
-      content.appendChild(actionsDiv);
-      modal.appendChild(content);
-    }
-
-    modal.style.display = "none";
-    document.body.appendChild(modal);
-    console.log(modal);
+    const content = document.createElement("div");
+    content.classList.add("content");
+    updateModalContent(content, data);
+    modal.appendChild(content);
 
     makeDraggable(modal);
-    // modal.hide = () => {
-    //   modal.style.display = "none";
-    // };
-    // modal.addEventListener("click", () => modal.hide!());
+    modal.style.display = "none";
+
+    document.body.appendChild(modal);
     return modal;
   });
 };
