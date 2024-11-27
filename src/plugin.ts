@@ -83,13 +83,38 @@ const tooltipModal = () => {
   const ID = "jkutkut/tooltip-modal";
 
   return getElementByIdOr(ID, () => {
-    const {onClose} = {
+    const {
+      onClose,
+      title,
+      canGoBack,
+      actions
+    } = {
       onClose: (e: MouseEvent) => {
         e.preventDefault();
-        console.log("Closing modal");
-        // TODO
+        modal.style.display = "none";
         return false;
       },
+      canGoBack: null,
+      // canGoBack: () => {
+      //   console.log("Going back");
+      // },
+      title: "Tooltip",
+      actions: [
+        {
+          text: "Action 1",
+          type: "action",
+          action: () => {
+            console.log("Action 1");
+          },
+        },
+        {
+          text: "Tooltip",
+          type: "tooltip",
+          action: () => {
+            console.log("Tooltip");
+          }
+        }
+      ]
     };
     const modal = document.createElement("div") as TooltipHtmlElement;
     modal.id = ID;
@@ -108,7 +133,56 @@ const tooltipModal = () => {
       closeBtn.addEventListener("click", onClose);
     }
 
-    // modal.style.display = "none";
+    {
+      const content = document.createElement("div");
+      content.classList.add("content");
+      {
+        const titleEl = document.createElement("span");
+        titleEl.classList.add("title");
+        titleEl.textContent = title;
+        if (canGoBack) {
+          const backBtn = document.createElement("a");
+          backBtn.classList.add("back");
+          backBtn.textContent = "<";
+          backBtn.addEventListener("click", canGoBack);
+          backBtn.appendChild(titleEl);
+          content.appendChild(backBtn);
+        }
+        else {
+          content.appendChild(titleEl);
+        }
+      }
+      const actionsDiv = document.createElement("div");
+      actionsDiv.classList.add("actions");
+      {
+        for (const action of actions) {
+          const actionEl = document.createElement("a");
+          actionEl.classList.add("action");
+          actionEl.textContent = action.text;
+          const icon = document.createElement("span");
+          switch (action.type) {
+            case "tooltip":
+              icon.innerHTML = "&gt;";
+              break;
+            case "action":
+              icon.innerHTML = "&#9658;";
+              break;
+            default:
+              console.warn("Invalid action type:", action.type);
+              continue;
+          }
+          if (action.action) {
+            actionEl.addEventListener("click", action.action);
+          }
+          actionEl.appendChild(icon);
+          actionsDiv.appendChild(actionEl);
+        }
+      }
+      content.appendChild(actionsDiv);
+      modal.appendChild(content);
+    }
+
+    modal.style.display = "none";
     document.body.appendChild(modal);
     console.log(modal);
 
