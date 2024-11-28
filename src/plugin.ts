@@ -84,6 +84,13 @@ const updateModalContent = (content: HTMLElement, {
   canGoBack,
   actions
 }: any) => {
+  console.debug(
+    "Update modal content\n",
+    "Modal content", content,
+    "\ntitle", title,
+    "\ncanGoBack", canGoBack,
+    "\nactions", actions
+  );
   if (content.hasChildNodes()) {
     content.innerHTML = "";
   }
@@ -142,29 +149,6 @@ const tooltipModal = () => {
       // TODO
       return false;
     };
-    const data = {
-      canGoBack: null,
-      // canGoBack: () => {
-      //   console.log("Going back");
-      // },
-      title: "Tooltip",
-      actions: [
-        {
-          text: "Action 1",
-          type: "action",
-          action: () => {
-            console.log("Action 1");
-          },
-        },
-        {
-          text: "Tooltip",
-          type: "tooltip",
-          action: () => {
-            console.log("Tooltip");
-          }
-        }
-      ]
-    };
     const modal = document.createElement("div") as TooltipHtmlElement;
     modal.id = ID;
     modal.classList.add("modal");
@@ -184,7 +168,6 @@ const tooltipModal = () => {
 
     const content = document.createElement("div");
     content.classList.add("content");
-    updateModalContent(content, data);
     modal.appendChild(content);
 
     makeDraggable(modal);
@@ -195,9 +178,52 @@ const tooltipModal = () => {
   });
 };
 
-const floatingButton = tooltipButton();
-const tooltip = tooltipModal();
+const updateTooltip = (modal: any, tools: any, title?: string, canGoBack?: () => void) => {
+  if (!tools) {
+    return;
+  }
+  updateModalContent(
+    modal,
+    {
+      title,
+      canGoBack,
+      actions: Object.entries(tools).map(([name, value]) => {
+        if (typeof value === "function") {
+          return { text: name, type: "action", action: value };
+        }
+        if (typeof value === "object") {
+          const newGoBack = () => {
+            updateTooltip(modal, tools, title, canGoBack);
+          }; // TODO memory?
+          return { text: name, type: "tooltip", action: () => updateTooltip(modal, value, name, newGoBack) };
+        }
+        console.warn("Invalid action / toolbook:", name, value);
+        return;
+      }).filter(Boolean)
+    }
+  );
+};
 
+const actions = {
+  "action 1": () => {
+    console.log("Action 1");
+  },
+  "book 1": {
+    "action 2": () => {
+      console.log("Action 2");
+    },
+    "book 2": {
+      "action 3": () => {
+        console.log("Action 3");
+      }
+    }
+  }
+};
+
+const tooltip = tooltipModal();
+updateTooltip(tooltip.querySelector(".content"), actions, "Tooltip");
+
+const floatingButton = tooltipButton();
 floatingButton.addEventListener("click", () => {
   console.log("Floating button clicked!");
   tooltip.style.display = "flex";
