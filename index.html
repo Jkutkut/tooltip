@@ -11,7 +11,7 @@
     <script src="/dist/autoreload.js"></script>
 
     <style>
-        .modal {
+        .tooltip-modal {
             position: absolute;
             width: 250px;
             background-color: #333;
@@ -21,7 +21,7 @@
             flex-direction: column;
         }
 
-        .modal .drag-handle {
+        .tooltip-modal .drag-handle {
             display: flex;
             justify-content: flex-end;
             width: 100%;
@@ -32,21 +32,24 @@
             cursor: move;
         }
 
-        .modal .drag-handle .close:after {
+        .tooltip-modal .drag-handle .close:after {
             content: "x";
             padding-right: 10px;
         }
 
-        .modal .content {
+        .tooltip-modal .content {
             padding: 20px;
             padding-right: 15px;
+
+            max-height: 300px;
+            overflow-y: auto;
         }
 
-        .modal .title {
+        .tooltip-modal .title {
             font-weight: normal;
         }
 
-        .modal .content .back {
+        .tooltip-modal .content .back {
             display: flex;
             justify-content: row;
             gap: 10px;
@@ -54,7 +57,7 @@
             font-weight: bold;
         }
 
-        .modal .actions, .modal .dialog {
+        .tooltip-modal .actions, .tooltip-modal .dialog {
             display: flex;
             flex-direction: column;
             gap: 10px;
@@ -62,7 +65,7 @@
             padding-top: 10px;
         }
 
-        .modal .actions .action {
+        .tooltip-modal .actions .action {
             padding: 0.5rem;
             padding-right: 1rem;
             background: #444;
@@ -73,27 +76,27 @@
             }
         }
 
-        .modal a {
+        .tooltip-modal a {
             cursor: pointer;
         }
 
-        .modal .btn {
+        .tooltip-modal .btn {
             padding: 0.5rem;
             background: #444;
             text-align: end;
         }
 
-        .modal div.input {
+        .tooltip-modal div.input {
             display: flex;
             flex-direction: column;
         }
 
-        .modal div.input.ok {
+        .tooltip-modal div.input.ok {
             .validation {
                 color: #0b0;
             }
         }
-        .modal div.input.error {
+        .tooltip-modal div.input.error {
             .validation {
                 color: #e00;
             }
@@ -101,7 +104,7 @@
     </style>
 
     <!--
-    <div class="modal" style="top: 50px; left: 50px;">
+    <div class="tooltip-modal" style="top: 50px; left: 50px;">
         <a class="drag-handle close"></a>
         <div class="content">
             <span class="title">Tooltip</span>
@@ -138,7 +141,7 @@
         </div>
     </div>
 
-    <div class="modal" style="top: 50px; left: 310px;">
+    <div class="tooltip-modal" style="top: 50px; left: 310px;">
         <a class="drag-handle close"></a>
         <div class="content">
             <a class="back">
@@ -178,7 +181,7 @@
         </div>
     </div>
 
-    <div class="modal" style="top: 50px; left: 570px;">
+    <div class="tooltip-modal" style="top: 50px; left: 570px;">
         <a class="drag-handle close"></a>
         <div class="content">
             <a class="back">

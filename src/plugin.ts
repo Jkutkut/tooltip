@@ -151,7 +151,7 @@ const tooltipModal = () => {
     };
     const modal = document.createElement("div") as TooltipHtmlElement;
     modal.id = ID;
-    modal.classList.add("modal");
+    modal.classList.add("tooltip-modal");
 
     // modal.style.top = "0";
     // modal.style.left = "0";
@@ -182,8 +182,9 @@ const updateTooltip = (modal: any, tools: any, title?: string, canGoBack?: () =>
   if (!tools) {
     return;
   }
+  title = title || "Tooltip";
   updateModalContent(
-    modal,
+    modal.querySelector(".content") || modal,
     {
       title,
       canGoBack,
@@ -204,29 +205,13 @@ const updateTooltip = (modal: any, tools: any, title?: string, canGoBack?: () =>
   );
 };
 
-const actions = {
-  "action 1": () => {
-    console.log("Action 1");
-  },
-  "book 1": {
-    "action 2": () => {
-      console.log("Action 2");
-    },
-    "book 2": {
-      "action 3": () => {
-        console.log("Action 3");
-      }
-    }
-  }
-};
-
 const tooltip = tooltipModal();
-updateTooltip(tooltip.querySelector(".content"), actions, "Tooltip");
 
 const floatingButton = tooltipButton();
 floatingButton.addEventListener("click", () => {
   console.log("Floating button clicked!");
   tooltip.style.display = "flex";
+  updateTooltip(tooltip, document.tmTools);
 });
 
 setTimeout(() => {
