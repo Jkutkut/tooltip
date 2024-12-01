@@ -1,11 +1,11 @@
 const makeDraggable = (
   element: HTMLElement,
-  onDragStart?: (e: MouseEvent) => void,
   onDragEnd?: (e: MouseEvent) => void,
   xAxis: "right" | "left" = "right",
   yAxis: "top" | "bottom" = "top",
 ) => {
-  let deltaX = 0, deltaY = 0, prevX = 0, prevY = 0;
+  let prevX = 0, prevY = 0;
+  let deltaX, deltaY, x, y;
 
   const dragMouseDown = (e: MouseEvent) => {
     e.preventDefault();
@@ -13,38 +13,34 @@ const makeDraggable = (
     prevY = e.clientY;
     document.onmouseup = closeDragElement;
     document.onmousemove = dragElement;
-    onDragStart && onDragStart(e);
   };
 
   const dragElement = (e: MouseEvent) => {
     e.preventDefault();
 
-    let x: number;
-    let y: number;
     deltaX = prevX - e.clientX;
+    deltaY = prevY - e.clientY;
     if (xAxis === "left") {
       x = element.offsetLeft - deltaX;
     } else {
-      const offsetRight = window.innerWidth - element.offsetLeft - element.offsetWidth; 
-      x = offsetRight + deltaX;
+      x = (window.innerWidth - element.offsetLeft - element.offsetWidth) + deltaX;
     }
-    deltaY = prevY - e.clientY;
     if (yAxis === "top") {
       y = element.offsetTop - deltaY;
     } else {
-      const offsetBottom = window.innerHeight - element.offsetTop - element.offsetHeight; 
-      y = offsetBottom + deltaY;
+      y = (window.innerHeight - element.offsetTop - element.offsetHeight) + deltaY;
     }
 
-    x = Math.max(0, x);
-    x = Math.min(window.innerWidth - element.offsetWidth, x);
-    y = Math.max(0, y);
-    y = Math.min(window.innerHeight - element.offsetHeight, y);
+    const validX = Math.max(0, Math.min(window.innerWidth - element.offsetWidth, x));
+    const validY = Math.max(0, Math.min(window.innerHeight - element.offsetHeight, y));
 
-    prevX = e.clientX;
-    prevY = e.clientY;
+    if (validX === x) {
+      prevX = e.clientX;
+    }
+    if (validY === y) {
+      prevY = e.clientY;
+    }
 
-    console.log("Dragging", xAxis, x, yAxis, y);
     element.style[xAxis] = x + "px";
     element.style[yAxis] = y + "px";
   };
@@ -85,9 +81,6 @@ const makePersistentDraggable = (
   }
   makeDraggable(
     element,
-    () => {
-      console.log("drag start");
-    },
     () => {
       console.log("drag end", element.style[xAxis], element.style[yAxis]);
       localStorage.setItem(
