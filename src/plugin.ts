@@ -1,37 +1,58 @@
-const makeDraggable = (element: HTMLElement) => {
-  let currentPosX = 0, currentPosY = 0, previousPosX = 0, previousPosY = 0;
+const makeDraggable = (
+  element: HTMLElement,
+  onDragStart?: (e: MouseEvent) => void,
+  onDragEnd?: (e: MouseEvent) => void,
+  xAxis: "right" | "left" = "right",
+  yAxis: "top" | "bottom" = "top",
+) => {
+  let deltaX = 0, deltaY = 0, prevX = 0, prevY = 0;
 
   const dragMouseDown = (e: MouseEvent) => {
     e.preventDefault();
-    previousPosX = e.clientX;
-    previousPosY = e.clientY;
+    prevX = e.clientX;
+    prevY = e.clientY;
     document.onmouseup = closeDragElement;
     document.onmousemove = dragElement;
+    onDragStart && onDragStart(e);
   };
 
   const dragElement = (e: MouseEvent) => {
     e.preventDefault();
-    currentPosX = previousPosX - e.clientX;
-    currentPosY = previousPosY - e.clientY;
 
-    let y = element.offsetTop - currentPosY;
-    let x = element.offsetLeft - currentPosX;
+    let x: number;
+    let y: number;
+    deltaX = prevX - e.clientX;
+    if (xAxis === "left") {
+      x = element.offsetLeft - deltaX;
+    } else {
+      const offsetRight = window.innerWidth - element.offsetLeft - element.offsetWidth; 
+      x = offsetRight + deltaX;
+    }
+    deltaY = prevY - e.clientY;
+    if (yAxis === "top") {
+      y = element.offsetTop - deltaY;
+    } else {
+      const offsetBottom = window.innerHeight - element.offsetTop - element.offsetHeight; 
+      y = offsetBottom + deltaY;
+    }
 
-    y = Math.max(0, y);
     x = Math.max(0, x);
-
-    y = Math.min(window.innerHeight - element.offsetHeight, y);
     x = Math.min(window.innerWidth - element.offsetWidth, x);
+    y = Math.max(0, y);
+    y = Math.min(window.innerHeight - element.offsetHeight, y);
 
-    previousPosX = e.clientX;
-    previousPosY = e.clientY;
-    element.style.top = y + 'px';
-    element.style.left = x + 'px';
+    prevX = e.clientX;
+    prevY = e.clientY;
+
+    console.log("Dragging", xAxis, x, yAxis, y);
+    element.style[xAxis] = x + "px";
+    element.style[yAxis] = y + "px";
   };
 
-  const closeDragElement = () => {
+  const closeDragElement = (e: MouseEvent) => {
     document.onmouseup = null;
     document.onmousemove = null;
+    onDragEnd && onDragEnd(e);
   };
 
   const dragHandle = element.querySelector('.drag-handle') as HTMLElement;
@@ -42,6 +63,44 @@ const makeDraggable = (element: HTMLElement) => {
       element.onmousedown = dragMouseDown;
   }
 };
+
+const makePersistentDraggable = (
+  element: HTMLElement,
+  initialX: number = 50,
+  initialY: number = 50,
+  xAxis: "right" | "left" = "right",
+  yAxis: "top" | "bottom" = "top",
+) => {
+  const elementIdKey = `${element.id}-drag-persistent`;
+  element.style.position = "absolute";
+  const stored = localStorage.getItem(elementIdKey);
+  if (stored) {
+    const { x, y } = JSON.parse(stored);
+    element.style[xAxis] = x;
+    element.style[yAxis] = y;
+  }
+  else {
+    element.style[yAxis] = initialY + "px";
+    element.style[xAxis] = initialX + "px";
+  }
+  makeDraggable(
+    element,
+    () => {
+      console.log("drag start");
+    },
+    () => {
+      console.log("drag end", element.style[xAxis], element.style[yAxis]);
+      localStorage.setItem(
+        elementIdKey,
+        JSON.stringify({
+          x: element.style[xAxis],
+          y: element.style[yAxis],
+        })
+      );
+    },
+    xAxis, yAxis
+  );
+}
 
 type TooltipHtmlElement = HTMLElement & {
   hide?: () => void
@@ -62,9 +121,6 @@ const tooltipButton = () => {
     const floatingButton: TooltipHtmlElement = document.createElement("div");
     floatingButton.id = ID;
 
-    floatingButton.style.position = "absolute";
-    floatingButton.style.top = "10px";
-    floatingButton.style.right = "10px";
     floatingButton.style.width = "50px";
     floatingButton.style.height = "50px";
     floatingButton.style.borderRadius = "50%";
@@ -74,7 +130,7 @@ const tooltipButton = () => {
     floatingButton.hide = () => {
       floatingButton.style.display = "none";
     };
-    makeDraggable(floatingButton);
+    makePersistentDraggable(floatingButton, 10, 10, "right");
     return floatingButton;
   });
 };
@@ -153,9 +209,6 @@ const tooltipModal = () => {
     modal.id = ID;
     modal.classList.add("tooltip-modal");
 
-    // modal.style.top = "0";
-    // modal.style.left = "0";
-
     {
       const dragHandle = document.createElement("div");
       dragHandle.classList.add("drag-handle");
@@ -170,7 +223,7 @@ const tooltipModal = () => {
     content.classList.add("content");
     modal.appendChild(content);
 
-    makeDraggable(modal);
+    makePersistentDraggable(modal, 10, 100, "left");
     modal.style.display = "none";
 
     document.body.appendChild(modal);
