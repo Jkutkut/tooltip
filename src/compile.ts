@@ -5,6 +5,7 @@ import { transform as lightningcssTransform } from "lightningcss";
 const SRC_DIRECTORY = import.meta.dirname;
 const SRC_TS_FILES = [
   "plugin.ts",
+  "plugin.test.ts",
   "autoreload.ts",
 ].map((file) => `${SRC_DIRECTORY}/${file}`);
 const SRC_CSS_FILE = `${SRC_DIRECTORY}/plugin.css`;
