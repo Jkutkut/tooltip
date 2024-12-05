@@ -2,6 +2,10 @@
   "name": "tooltip",
   "module": "src/index.ts",
   "type": "module",
+  "scripts": {
+    "server": "bun run server.ts",
+    "build": "echo todo"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
