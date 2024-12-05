@@ -1,0 +1,95 @@
+.tooltip-button {
+    width: 50px;
+    height: 50px;
+    background-color: #33cc33;
+    border-radius: 50%;
+}
+.tooltip-modal {
+    position: absolute;
+    width: 250px;
+    background-color: #333;
+    padding-top: 0px;
+
+    color: #fff;
+    flex-direction: column;
+}
+
+.tooltip-modal .drag-handle {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    height: 20px;
+    background-color: #444;
+
+    color: #fff;
+    cursor: move;
+}
+
+.tooltip-modal .drag-handle .close:after {
+    content: "x";
+    padding-right: 10px;
+}
+
+.tooltip-modal .content {
+    padding: 20px;
+    padding-right: 15px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.tooltip-modal .title {
+    font-weight: normal;
+}
+
+.tooltip-modal .content .back {
+    display: flex;
+    justify-content: row;
+    gap: 10px;
+
+    font-weight: bold;
+}
+
+.tooltip-modal .actions, .tooltip-modal .dialog {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    padding-top: 10px;
+}
+
+.tooltip-modal .actions .action {
+    padding: 0.5rem;
+    padding-right: 1rem;
+    background: #444;
+    display: flex;
+    justify-content: space-between;
+    span {
+        font-weight: bold;
+    }
+}
+
+.tooltip-modal a {
+    cursor: pointer;
+}
+
+.tooltip-modal .btn {
+    padding: 0.5rem;
+    background: #444;
+    text-align: end;
+}
+
+.tooltip-modal div.input {
+    display: flex;
+    flex-direction: column;
+}
+
+.tooltip-modal div.input.ok {
+    .validation {
+        color: #0b0;
+    }
+}
+.tooltip-modal div.input.error {
+    .validation {
+        color: #e00;
+    }
+}

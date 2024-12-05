@@ -112,12 +112,8 @@ const tooltipButton = () => {
 
   return getElementByIdOr(ID, () => {
     const floatingButton: TooltipHtmlElement = document.createElement("div");
+    floatingButton.classList.add("tooltip-button");
     floatingButton.id = ID;
-
-    floatingButton.style.width = "50px";
-    floatingButton.style.height = "50px";
-    floatingButton.style.borderRadius = "50%";
-    floatingButton.style.backgroundColor = "red";
 
     document.body.appendChild(floatingButton);
     floatingButton.hide = () => {
