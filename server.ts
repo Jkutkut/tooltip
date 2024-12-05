@@ -1,6 +1,8 @@
 import { serve } from "bun";
 import { watch } from "fs";
 
+import { compile } from "./src/compile";
+
 let sockets: WebSocket[] = [];
 
 serve({
@@ -36,19 +38,6 @@ const reloadAllClients = () => {
     }
 };
 
-const buildCode = async () => {
-  console.debug("Building code...");
-  const tsFiles = new Bun.Glob("*.ts");
-  const srcFiles = [
-    ...tsFiles.scanSync(srcDir)
-  ].map((file) => srcDir + "/" + file);
-  await Bun.build({
-    entrypoints: srcFiles,
-    outdir: "dist",
-  });
-  console.debug("Code built");
-}
-
 const srcDir = import.meta.dirname + "/src";
 const watchers = [
   watch(
@@ -60,7 +49,7 @@ const watchers = [
         return;
       }
       console.log("File changed: " + filename);
-      await buildCode();
+      await compile();
       reloadAllClients();
     },
   ),
@@ -77,6 +66,6 @@ const watchers = [
   ),
 ];
 
-buildCode().then(() => {
+compile().then(() => {
   console.log("Tooltip server started");
 })
