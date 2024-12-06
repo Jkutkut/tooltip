@@ -30,9 +30,12 @@
 
 .tooltip-modal .content {
     padding: 20px;
-    padding-right: 15px;
+    padding-right: 10px;
     max-height: 300px;
     overflow-y: auto;
+
+    scrollbar-width: 10px;
+    scrollbar-color: #888 #444;
 }
 
 .tooltip-modal .title {
