@@ -1,6 +1,6 @@
-import lzString from "lz-string";
 import fs from "fs";
 import { transform as lightningcssTransform } from "lightningcss";
+import {lzCompressUtf16} from "./plugin/lz";
 
 const SRC_DIRECTORY = import.meta.dirname;
 const SRC_TS_FILES = [
@@ -14,7 +14,7 @@ const DIST_CSS_FILE = `${DIST_DIRECTORY}/plugin.min.css`;
 const DIST_CSS_OBJ_FILE = `${DIST_DIRECTORY}/plugin.min.css.o`;
 
 const compressFile = (path: string) => {
-  return lzString.compressToUTF16(fs.readFileSync(path, {
+  return lzCompressUtf16(fs.readFileSync(path, {
     encoding: 'utf8',
   }));
 };
