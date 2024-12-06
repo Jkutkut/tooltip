@@ -1,4 +1,4 @@
-import { InitialPosition } from "./types";
+import type {InitialPosition} from "./types";
 
 const makeDraggable = (
   element: HTMLElement,
@@ -6,48 +6,34 @@ const makeDraggable = (
   xAxis: "right" | "left" = "right",
   yAxis: "top" | "bottom" = "top",
 ) => {
-  let prevX = 0, prevY = 0;
-  let deltaX, deltaY, x, y;
+  let offsetMouseObjX: number = 0;
+  let offsetMouseObjY: number = 0;
+  let x: number, y: number;
 
   const dragMouseDown = (e: MouseEvent) => {
     e.preventDefault();
-    prevX = e.clientX;
-    prevY = e.clientY;
     document.onmouseup = closeDragElement;
     document.onmousemove = dragElement;
+    offsetMouseObjX = e.clientX - element.offsetLeft;
+    offsetMouseObjY = e.clientY - element.offsetTop;
   };
 
   const dragElement = (e: MouseEvent) => {
     e.preventDefault();
-
-    deltaX = prevX - e.clientX;
-    deltaY = prevY - e.clientY;
-    if (xAxis === "left") {
-      x = element.offsetLeft - deltaX;
-    } else {
-      x = (window.innerWidth - element.offsetLeft - element.offsetWidth) + deltaX;
-    }
-    if (yAxis === "top") {
-      y = element.offsetTop - deltaY;
-    } else {
-      y = (window.innerHeight - element.offsetTop - element.offsetHeight) + deltaY;
-    }
-
-    const validX = Math.max(0, Math.min(window.innerWidth - element.offsetWidth, x));
-    const validY = Math.max(0, Math.min(window.innerHeight - element.offsetHeight, y));
-
-    if (validX === x) {
-      prevX = e.clientX;
-    }
-    if (validY === y) {
-      prevY = e.clientY;
-    }
-
+    x = e.clientX - offsetMouseObjX;
+    y = e.clientY - offsetMouseObjY;
     element.style[xAxis] = x + "px";
     element.style[yAxis] = y + "px";
   };
 
   const closeDragElement = (e: MouseEvent) => {
+    x = Math.max(0, element.offsetLeft);
+    y = Math.max(0, element.offsetTop);
+    x -= Math.max(element.offsetLeft + element.offsetWidth - window.innerWidth, 0);
+    y -= Math.max(element.offsetTop + element.offsetHeight - window.innerHeight, 0);
+    element.style[xAxis] = x + "px";
+    element.style[yAxis] = y + "px";
+
     document.onmouseup = null;
     document.onmousemove = null;
     onDragEnd && onDragEnd(e);
@@ -91,7 +77,6 @@ const makePersistentDraggable = (
   makeDraggable(
     element,
     () => {
-      console.log("drag end", element.style[xAxis], element.style[yAxis]);
       localStorage.setItem(
         elementIdKey,
         JSON.stringify({
