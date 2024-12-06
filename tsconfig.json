@@ -1,5 +1,11 @@
 {
   "compilerOptions": {
+    // Output
+    "paths": {
+      "@/*": ["./src/*"],
+      "d/*": ["./dist/*"]
+    },
+
     // Enable latest features
     "lib": ["ESNext", "DOM"],
     "target": "ESNext",

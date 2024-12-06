@@ -10,10 +10,11 @@ const SRC_TS_FILES = [
 ].map((file) => `${SRC_DIRECTORY}/${file}`);
 const SRC_CSS_FILE = `${SRC_DIRECTORY}/plugin.css`;
 const DIST_DIRECTORY = `${import.meta.dirname}/../dist`;
-const DIST_CSS_FILE = `${DIST_DIRECTORY}/tooltip.min.css`;
+const DIST_CSS_FILE = `${DIST_DIRECTORY}/plugin.min.css`;
+const DIST_CSS_OBJ_FILE = `${DIST_DIRECTORY}/plugin.min.css.o`;
 
 const compressFile = (path: string) => {
-  return lzString.compress(fs.readFileSync(path, {
+  return lzString.compressToUTF16(fs.readFileSync(path, {
     encoding: 'utf8',
   }));
 };
@@ -28,6 +29,7 @@ const compileCss = () => {
     minify: true
   });
   fs.writeFileSync(DIST_CSS_FILE, code);
+  fs.writeFileSync(DIST_CSS_OBJ_FILE, compressFile(DIST_CSS_FILE));
   console.debug("CSS compiled");
 };
 
