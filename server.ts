@@ -44,7 +44,7 @@ const watchers = [
     srcDir,
     { recursive: true },
     async (event, filename) => {
-      if (!filename || !filename.endsWith(".ts")) {
+      if (!filename || (!filename.endsWith(".ts") && !filename.endsWith(".css"))) {
         reloadAllClients();
         return;
       }

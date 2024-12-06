@@ -43,14 +43,16 @@ const compileTs = async () => {
       syntax: true,
       identifiers: false,
     }
-  });
-  console.debug("Code built");
+  })
+  .then(() => console.debug("Code built"))
+  .catch(console.error);
 }
 
 const compile = async () => {
-  if (!fs.existsSync("dist")) {
-    fs.mkdirSync("dist");
+  if (fs.existsSync("dist")) {
+    fs.rmSync("dist", { recursive: true, force: true });
   }
+  fs.mkdirSync("dist");
   compileCss();
   await compileTs();
 };
