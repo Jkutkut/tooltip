@@ -34,6 +34,7 @@
 }
 
 .tooltip-modal .content {
+    flex: 1;
     overflow-y: auto;
     background-color: #333;
 
