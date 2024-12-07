@@ -8,4 +8,15 @@ const getElementByIdOr = (id: string, or: () => TooltipHtmlElement) => {
   return or();
 };
 
-export { getElementByIdOr };
+const newDOMElement = (type: string, classes?: string[]) => {
+  const element = document.createElement(type);
+  if (classes) {
+    element.classList.add(...classes);
+  }
+  return element;
+};
+
+export {
+  getElementByIdOr,
+  newDOMElement,
+};

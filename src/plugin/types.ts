@@ -9,4 +9,10 @@ type InitialPosition = {
   yAxis?: "top" | "bottom",
 };
 
-export type { TooltipHtmlElement, InitialPosition };
+type ScalableDraggableOptions = {
+  w: number,
+  h: number,
+  onDragEnd?: (e: MouseEvent) => void,
+};
+
+export type { TooltipHtmlElement, InitialPosition, ScalableDraggableOptions };

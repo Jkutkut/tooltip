@@ -1,11 +1,13 @@
+:root {
+    --drag-scalable-handle-size: 5px;
+}
+
 .tooltip-button {
     width: 50px;
     height: 50px;
 }
 .tooltip-modal {
     position: absolute;
-    width: 250px;
-    background-color: #333;
     padding-top: 0px;
 
     color: #fff;
@@ -16,6 +18,7 @@
     display: flex;
     justify-content: flex-end;
     width: 100%;
+    margin-right: var(--drag-scalable-handle-size);
     height: 20px;
     background-color: #444;
 
@@ -29,13 +32,14 @@
 }
 
 .tooltip-modal .content {
-    padding: 20px;
-    padding-right: 10px;
-    max-height: 300px;
     overflow-y: auto;
+    background-color: #333;
 
     scrollbar-width: 10px;
     scrollbar-color: #888 #444;
+
+    padding: 20px 10px 20px 20px;
+    box-sizing: border-box; /* calculate bounding box based on border and padding */
 }
 
 .tooltip-modal .title {
@@ -93,4 +97,48 @@
     .validation {
         color: #e00;
     }
+}
+
+/* Scalable drag */
+.drag-scalable {
+    width: 100%;
+    max-height: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.drag-scalable-horizontal {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    max-height: 100%;
+}
+
+.drag-scalable-handle {
+    display: flex;
+    justify-content: end;
+}
+
+.drag-scalable-handle.bottom {
+    width: 100%;
+    height: var(--drag-scalable-handle-size);
+    cursor: n-resize;
+}
+
+.drag-scalable-handle.left, .drag-scalable-handle.right {
+    width: var(--drag-scalable-handle-size);
+    height: auto;
+    cursor: w-resize;
+}
+
+.drag-scalable-handle.diagonal {
+    width: var(--drag-scalable-handle-size);
+    height: var(--drag-scalable-handle-size);
+    cursor: nw-resize;
+}
+.drag-scalable-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
