@@ -3,6 +3,7 @@ import type {ScalableDraggableOptions} from "./types";
 
 const DEF_WIDTH = 200;
 const DEF_HEIGHT = 250;
+const OFFSET = 20;
 
 const scalableDraggableContainer = (
   children: HTMLElement | HTMLElement[],
@@ -81,6 +82,21 @@ const makeScalableDraggable = (
     document.removeEventListener("mousemove", resizeVertical);
     document.removeEventListener("mousemove", resizeHorizontal);
     document.removeEventListener("mousemove", resizeDiagonal);
+
+    const contentRect = content.getBoundingClientRect();
+    const endX = contentRect.left + contentRect.width;
+    const overflowX = endX - window.innerWidth;
+    if (overflowX > 0) {
+      const newWidth = Math.max(contentRect.width - overflowX - OFFSET, baseWidth);
+      content.style.width = `${newWidth}px`;
+    }
+    const endY = contentRect.top + contentRect.height;
+    const overflowY = endY - window.innerHeight;
+    if (overflowY > 0) {
+      const newHeight = Math.max(contentRect.height - overflowY - OFFSET, baseHeight);
+      content.style.height = `${newHeight}px`;
+    }
+
     onDragEnd && onDragEnd(e);
   });
 };
