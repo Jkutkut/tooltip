@@ -50,6 +50,7 @@ const makeScalableDraggable = (
     h: DEF_HEIGHT
   },
   onDragEnd?: (e: MouseEvent) => void,
+  onDragEndMobile?: (e: TouchEvent) => void
 ) => {
   const content = scalable.getElementsByClassName("drag-scalable-content")[0] as HTMLElement;
 
@@ -57,32 +58,33 @@ const makeScalableDraggable = (
   const handleRight = scalable.querySelector(".drag-scalable-handle.right")!;
   const handleDiag = scalable.querySelector(".drag-scalable-handle.diagonal")!;
 
-  const resizeVertical = (e: MouseEvent) => {
+  const handleResizeVertical = (y: number) => {
     const contentRect = content.getBoundingClientRect();
-    const newHeight = Math.max(e.clientY - contentRect.top, baseHeight);
+    const newHeight = Math.max(y - contentRect.top, baseHeight);
     content.style.height = `${newHeight}px`;
   };
-  const resizeHorizontal = (e: MouseEvent) => {
+  const resizeVertical = (e: MouseEvent) => handleResizeVertical(e.clientY);
+  const resizeVerticalTouch = (e: TouchEvent) => handleResizeVertical(e.touches[0].clientY);
+
+  const handleResizeHorizontal = (x: number) => {
     const contentRect = content.getBoundingClientRect();
-    const newWidth = Math.max(e.clientX - contentRect.left, baseWidth);
+    const newWidth = Math.max(x - contentRect.left, baseWidth);
     content.style.width = `${newWidth}px`;
   };
-  const resizeDiagonal = (e: MouseEvent) => {
+  const resizeHorizontal = (e: MouseEvent) => handleResizeHorizontal(e.clientX);
+  const resizeHorizontalTouch = (e: TouchEvent) => handleResizeHorizontal(e.touches[0].clientX);
+
+  const handleResizeDiagonal = (x: number, y: number) => {
     const contentRect = content.getBoundingClientRect();
-    const newWidth = Math.max(e.clientX - contentRect.left, baseWidth);
-    const newHeight = Math.max(e.clientY - contentRect.top, baseHeight);
+    const newWidth = Math.max(x - contentRect.left, baseWidth);
+    const newHeight = Math.max(y - contentRect.top, baseHeight);
     content.style.width = `${newWidth}px`;
     content.style.height = `${newHeight}px`;
   };
+  const resizeDiagonal = (e: MouseEvent) => handleResizeDiagonal(e.clientX, e.clientY);
+  const resizeDiagonalTouch = (e: TouchEvent) => handleResizeDiagonal(e.touches[0].clientX, e.touches[0].clientY);
 
-  handleBot.addEventListener("mousedown", (_) => document.addEventListener("mousemove", resizeVertical));
-  handleRight.addEventListener("mousedown", (_) => document.addEventListener("mousemove", resizeHorizontal));
-  handleDiag.addEventListener("mousedown", (_) => document.addEventListener("mousemove", resizeDiagonal));
-  document.addEventListener("mouseup", (e) => {
-    document.removeEventListener("mousemove", resizeVertical);
-    document.removeEventListener("mousemove", resizeHorizontal);
-    document.removeEventListener("mousemove", resizeDiagonal);
-
+  const handleMouseUp = () => {
     const contentRect = content.getBoundingClientRect();
     const endX = contentRect.left + contentRect.width;
     const overflowX = endX - window.innerWidth;
@@ -96,8 +98,28 @@ const makeScalableDraggable = (
       const newHeight = Math.max(contentRect.height - overflowY - OFFSET, baseHeight);
       content.style.height = `${newHeight}px`;
     }
+  };
 
+  handleBot.addEventListener("mousedown", (_) => document.addEventListener("mousemove", resizeVertical));
+  handleRight.addEventListener("mousedown", (_) => document.addEventListener("mousemove", resizeHorizontal));
+  handleDiag.addEventListener("mousedown", (_) => document.addEventListener("mousemove", resizeDiagonal));
+  handleBot.addEventListener("touchstart", (_) => document.addEventListener("touchmove", resizeVerticalTouch), { passive: false });
+  handleRight.addEventListener("touchstart", (_) => document.addEventListener("touchmove", resizeHorizontalTouch), { passive: false });
+  handleDiag.addEventListener("touchstart", (_) => document.addEventListener("touchmove", resizeDiagonalTouch), { passive: false });
+
+  document.addEventListener("mouseup", (e) => {
+    document.removeEventListener("mousemove", resizeVertical);
+    document.removeEventListener("mousemove", resizeHorizontal);
+    document.removeEventListener("mousemove", resizeDiagonal);
+    handleMouseUp();
     onDragEnd && onDragEnd(e);
+  });
+  document.addEventListener("touchend", (e) => {
+    document.removeEventListener("touchmove", resizeVerticalTouch);
+    document.removeEventListener("touchmove", resizeHorizontalTouch);
+    document.removeEventListener("touchmove", resizeDiagonalTouch);
+    handleMouseUp();
+    onDragEndMobile && onDragEndMobile(e);
   });
 };
 
@@ -119,13 +141,15 @@ const makePersistentScalableDraggable = (
     content.style.height = `${options?.h}px`;
   }
 
-  makeScalableDraggable(element, options, (_) => {
+  const savePosition = (_) => {
     const { width: w, height: h } = content.getBoundingClientRect();
     localStorage.setItem(elementIdKey, JSON.stringify({
       w: Math.max(Math.floor(w), options?.w || DEF_WIDTH),
       h: Math.max(Math.floor(h), options?.h || DEF_HEIGHT),
     }));
-  });
+  };
+
+  makeScalableDraggable(element, options, savePosition, savePosition);
 };
 
 export {

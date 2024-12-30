@@ -3,6 +3,7 @@ import type {InitialPosition} from "./types";
 const makeDraggable = (
   element: HTMLElement,
   onDragEnd?: (e: MouseEvent) => void,
+  onDragEndMobile?: (e: TouchEvent) => void,
   xAxis: "right" | "left" = "right",
   yAxis: "top" | "bottom" = "top",
 ) => {
@@ -10,41 +11,66 @@ const makeDraggable = (
   let offsetMouseObjY: number = 0;
   let x: number, y: number;
 
-  const dragMouseDown = (e: MouseEvent) => {
-    e.preventDefault();
-    document.onmouseup = closeDragElement;
-    document.onmousemove = dragElement;
-    offsetMouseObjX = e.clientX - element.offsetLeft;
-    offsetMouseObjY = e.clientY - element.offsetTop;
+  const handleDragMouseDown = (startX: number, startY: number) => {
+    offsetMouseObjX = startX - element.offsetLeft;
+    offsetMouseObjY = startY - element.offsetTop;
   };
 
-  const dragElement = (e: MouseEvent) => {
-    e.preventDefault();
-    x = e.clientX - offsetMouseObjX;
-    y = e.clientY - offsetMouseObjY;
+  const handleDragElement = (eventX: number, eventY: number) => {
+    x = eventX - offsetMouseObjX;
+    y = eventY - offsetMouseObjY;
     element.style[xAxis] = x + "px";
     element.style[yAxis] = y + "px";
   };
 
-  const closeDragElement = (e: MouseEvent) => {
+  const handleCloseDragElement = () => {
     x = Math.max(0, element.offsetLeft);
     y = Math.max(0, element.offsetTop);
     x -= Math.max(element.offsetLeft + element.offsetWidth - window.innerWidth, 0);
     y -= Math.max(element.offsetTop + element.offsetHeight - window.innerHeight, 0);
     element.style[xAxis] = x + "px";
     element.style[yAxis] = y + "px";
+  };
 
+  const dragMouseDown = (e: MouseEvent) => {
+    e.preventDefault();
+    document.onmouseup = closeDragElement;
+    document.onmousemove = dragElement;
+    handleDragMouseDown(e.clientX, e.clientY);
+  };
+  const dragMouseDownTouch = (e: TouchEvent) => {
+    document.ontouchend = closeDragElementTouch;
+    document.ontouchmove = dragElementTouch;
+    handleDragMouseDown(e.touches[0].clientX, e.touches[0].clientY);
+  };
+  const dragElement = (e: MouseEvent) => {
+    e.preventDefault();
+    handleDragElement(e.clientX, e.clientY);
+  };
+  const dragElementTouch = (e: TouchEvent) => {
+    handleDragElement(e.touches[0].clientX, e.touches[0].clientY);
+  };
+  const closeDragElement = (e: MouseEvent) => {
+    handleCloseDragElement();
     document.onmouseup = null;
     document.onmousemove = null;
     onDragEnd && onDragEnd(e);
+  };
+  const closeDragElementTouch = (e: TouchEvent) => {
+    handleCloseDragElement();
+    document.ontouchend = null;
+    document.ontouchmove = null;
+    onDragEndMobile && onDragEndMobile(e);
   };
 
   const dragHandle = element.querySelector('.drag-handle') as HTMLElement;
   if (dragHandle) {
       dragHandle.onmousedown = dragMouseDown;
+      dragHandle.addEventListener('touchstart', dragMouseDownTouch, { passive: true });
   }
   else {
       element.onmousedown = dragMouseDown;
+      element.addEventListener('touchstart', dragMouseDownTouch, { passive: true });
   }
 };
 
@@ -74,17 +100,18 @@ const makePersistentDraggable = (
     element.style[yAxis] = initialY + "px";
     element.style[xAxis] = initialX + "px";
   }
+  const savePosition = () => {
+    localStorage.setItem(
+      elementIdKey,
+      JSON.stringify({
+        x: element.style[xAxis],
+        y: element.style[yAxis],
+      })
+    );
+  };
   makeDraggable(
     element,
-    () => {
-      localStorage.setItem(
-        elementIdKey,
-        JSON.stringify({
-          x: element.style[xAxis],
-          y: element.style[yAxis],
-        })
-      );
-    },
+    savePosition, savePosition,
     xAxis, yAxis
   );
 };

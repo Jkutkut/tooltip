@@ -35,6 +35,14 @@ floatingButton.addEventListener("mousedown", () => {
     floatingButton.style.display = "none";
   }, LONG_PRESS_DELAY);
 });
+floatingButton.addEventListener("touchend", disableTooltipLongPress, { passive: false });
+floatingButton.addEventListener("touchmove", disableTooltipLongPress, { passive: false });
+floatingButton.addEventListener("touchstart", () => {
+  __tooltipLongPressTimeout = setTimeout(() => {
+    tooltip.style.display = "none";
+    floatingButton.style.display = "none";
+  }, LONG_PRESS_DELAY);
+}, { passive: false });
 
 setTimeout(() => {
   const click = new MouseEvent("click");
