@@ -14,7 +14,6 @@ loadTooltipCss();
 const tooltip = tooltipModal(MODAL_ID);
 const floatingButton = tooltipButton(BUTTON_ID);
 floatingButton.addEventListener("click", () => {
-  console.log("Floating button clicked!");
   tooltip.style.display = "flex";
   updateTooltip(tooltip, document.tmTools);
 });
@@ -46,6 +45,5 @@ floatingButton.addEventListener("touchstart", () => {
 
 setTimeout(() => {
   const click = new MouseEvent("click");
-  console.log("Dispatching click event...");
   floatingButton.dispatchEvent(click);
 }, 800);
