@@ -1,10 +1,10 @@
-import {tooltipModal, updateTooltip} from "./modal";
+import {tooltipModal, loadTooltipModal} from "./modal";
 import { tooltipButton } from "./button";
 import { loadTooltipCss } from "./cssLoader";
 
 export {
   tooltipModal,
-  updateTooltip,
+  loadTooltipModal,
   tooltipButton,
   loadTooltipCss
 };

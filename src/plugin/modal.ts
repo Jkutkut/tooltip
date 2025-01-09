@@ -176,7 +176,7 @@ const updateModalContent = (
   }
 };
 
-const updateTooltip = (modal: any, tools: any, title?: string) => {
+const loadTooltipModal = (modal: any, tools: any, title?: string) => {
   if (!tools) {
     return;
   }
@@ -193,4 +193,4 @@ const updateTooltip = (modal: any, tools: any, title?: string) => {
   );
 };
 
-export { tooltipModal, updateTooltip };
+export { tooltipModal, loadTooltipModal };

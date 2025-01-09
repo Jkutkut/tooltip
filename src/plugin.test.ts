@@ -1,7 +1,7 @@
 import {
   tooltipModal,
   tooltipButton,
-  updateTooltip,
+  loadTooltipModal,
   loadTooltipCss
 } from "./plugin/index";
 
@@ -15,7 +15,7 @@ const tooltip = tooltipModal(MODAL_ID);
 const floatingButton = tooltipButton(BUTTON_ID);
 floatingButton.addEventListener("click", () => {
   tooltip.style.display = "flex";
-  updateTooltip(tooltip, document.tmTools);
+  loadTooltipModal(tooltip, document.tmTools); // TODO load only the first time
 });
 
 // long press
