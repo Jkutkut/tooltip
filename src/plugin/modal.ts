@@ -50,6 +50,50 @@ const tooltipModal = (
   });
 };
 
+enum TooltipNodeType {
+  Node = "node",
+  RawObject = "rawObject",
+  Invalid = "invalid",
+}
+
+type TooltipNode = {
+  name: string;
+  previous: TooltipNode | null;
+  type: TooltipNodeType | string;
+  content: TooltipNode[] | any;
+};
+
+const processors: ( (node: TooltipNode, parent?: TooltipNode) => void )[] = [
+  /* Action */ (node) => {
+    if (typeof node.content === "function") {
+      node.type = "action";
+    }
+  },
+  /* Node */ (node, parentNode) => {
+   if (typeof node.content === "object") {
+      node.type = "node";
+      node.content = proccessObjectAsNodeArray(node.content, parentNode);
+    }
+  },
+  /* Fallback */ (node) => {
+    console.warn("Invalid node:", node.name, node);
+    node.type = TooltipNodeType.Invalid;
+  }
+];
+
+const actuators: { [key: string]: (node: TooltipNode, modalContent: HTMLElement) => void } = {
+  action: (node, _) => {
+    console.log("Executing action", node);
+    (node.content as Function)();
+  },
+  node: (node, modal) => updateModalContent(modal, node),
+};
+
+const sortingTooltipNodes = [
+  TooltipNodeType.Node,
+  "action",
+];
+
 const proccessObjectAsNodeArray = (obj: any, previousNode: TooltipNode | null = null) => {
   return Object.entries(obj).map(([name, value]) => (
       {
@@ -63,41 +107,24 @@ const proccessObjectAsNodeArray = (obj: any, previousNode: TooltipNode | null = 
 };
 
 const proccessNode = (node: TooltipNode) => {
-  switch (node.type) {
-    case TooltipNodeType.RawObject:
-      if (typeof node.content === "function") {
-        node.type = TooltipNodeType.Action;
-      }
-      else if (typeof node.content === "object") {
-        node.type = TooltipNodeType.Node;
-        node.content = proccessObjectAsNodeArray(node.content, node);
-      }
-      else {
-        console.error("TODO invalid node:", node.name, node);
-        node.type = TooltipNodeType.Invalid;
-      }
-      break;
-    case TooltipNodeType.Node:
-    case TooltipNodeType.Action:
-      break;
-    default:
-      console.warn("TODO unknown node type:", node.name, node.type);
-      break;
+  for (let i = 0; node.type == TooltipNodeType.RawObject && i < processors.length; i++) {
+    processors[i](node);
   }
 };
 
 const updateModalContent = (
   htmlElement: HTMLElement,
-  node: TooltipNode,
+  currentNode: TooltipNode,
 ) => {
   const {
     name: title,
     previous,
     type,
-  } = node;
+  } = currentNode;
   if (htmlElement.hasChildNodes()) {
     htmlElement.innerHTML = "";
   }
+  console.debug("Updating modal", title, currentNode, htmlElement);
   {
     const titleEl = document.createElement("span");
     titleEl.classList.add("title");
@@ -116,67 +143,37 @@ const updateModalContent = (
   }
   const actionsDiv = document.createElement("div");
   actionsDiv.classList.add("actions");
-  switch (type) {
-    case TooltipNodeType.Node:
-      const nodes = node.content as TooltipNode[];
-      {
-        for (let i = 0; i < nodes.length; i++) {
-          const node = nodes[i];
-          proccessNode(node);
-          if (node.type === TooltipNodeType.Invalid) {
-            nodes.splice(i, 1);
-            i--;
-            continue;
-          }
-          const actionEl = document.createElement("a");
-          actionEl.classList.add("action");
-          actionEl.textContent = node.name;
-          const icon = document.createElement("span");
-          if (node.type === TooltipNodeType.Node) {
-            icon.innerHTML = "&gt;";
-            actionEl.addEventListener("click", () => {
-              updateModalContent(htmlElement, node);
-            });
-          }
-          else {
-            icon.innerHTML = "&#9658;";
-            if (node.type === TooltipNodeType.Action) {
-              actionEl.addEventListener("click", () => {
-                console.log("Executing action", node);
-                (node.content as TooltipAction)();
-              });
-            }
-          }
-          actionEl.appendChild(icon);
-          actionsDiv.appendChild(actionEl);
-        }
-      }
-      break;
-    default:
-      console.warn("Invalid node type:", type);
-  }
   htmlElement.appendChild(actionsDiv);
-};
-
-type TooltipRawObject = any;
-type TooltipAction = () => void;
-type TooltipForm = {
-};
-
-enum TooltipNodeType {
-  Node = "node",
-  Action = "action",
-  Form = "form",
-  RawObject = "rawObject",
-  Invalid = "invalid",
-}
-type TooltipOption = TooltipAction | TooltipForm | TooltipRawObject;
-
-type TooltipNode = {
-  name: string;
-  previous: TooltipNode | null;
-  type: TooltipNodeType;
-  content: TooltipNode[] | TooltipOption;
+  if (currentNode.type !== TooltipNodeType.Node) {
+    console.warn("Invalid node type:", type);
+    return;
+  }
+  
+  let nodes = (currentNode.content as TooltipNode[]);
+  nodes.forEach(proccessNode);
+  nodes = nodes.filter((node) => node.type !== TooltipNodeType.Invalid);
+  nodes.sort((a, b) => {
+    const byType = sortingTooltipNodes.indexOf(a.type) - sortingTooltipNodes.indexOf(b.type);
+    if (byType !== 0) {
+      return byType;
+    }
+    return a.name.localeCompare(b.name, "en", { numeric: true });
+  });
+  for (const node of nodes) {
+    const actionEl = document.createElement("a");
+    actionEl.classList.add("action");
+    actionEl.textContent = node.name;
+    const icon = document.createElement("span");
+    icon.innerHTML = (node.type === TooltipNodeType.Node) ? "&gt;" : "&#9658;";
+    const clickAction = actuators[node.type];
+    if (clickAction) {
+      actionEl.addEventListener("click", () => {
+        clickAction(node, htmlElement);
+      });
+    }
+    actionEl.appendChild(icon);
+    actionsDiv.appendChild(actionEl);
+  }
 };
 
 const updateTooltip = (modal: any, tools: any, title?: string) => {
