@@ -1,3 +1,4 @@
+import {loadTooltipCss} from ".";
 import { makePersistentDraggable } from "./draggable";
 import {lzDecompressUtf16} from "./lz";
 import type { InitialPosition, TooltipHtmlElement } from "./types";
@@ -6,6 +7,7 @@ import { getElementByIdOr } from "./utils";
 import logo from "@/../dist/toolbox-logo.svg.o" with { type: "text" };
 
 const tooltipButton = (id: string, initialPosition?: InitialPosition) => {
+  loadTooltipCss();
   return getElementByIdOr(id, () => {
     const floatingButton: TooltipHtmlElement = document.createElement("div");
     floatingButton.classList.add("tooltip-button");

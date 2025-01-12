@@ -1,3 +1,4 @@
+import {loadTooltipCss} from ".";
 import {makePersistentDraggable} from "./draggable";
 import {makePersistentScalableDraggable, scalableDraggableContainer} from "./scalable-draggable";
 import type {InitialPosition, ScalableDraggableOptions} from "./types";
@@ -8,6 +9,7 @@ const tooltipModal = (
   initialPosition?: InitialPosition,
   scaleOptions?: ScalableDraggableOptions
 ) => {
+  loadTooltipCss();
   return getElementByIdOr(id, () => {
     const onClose = (e: MouseEvent) => {
       e.preventDefault();

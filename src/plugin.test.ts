@@ -2,14 +2,11 @@ import {
   tooltipModal,
   tooltipButton,
   loadTooltipModal,
-  loadTooltipCss
 } from "./plugin/index";
 
 const MODAL_ID = "jkutkut/tooltip-modal";
 const BUTTON_ID = "jkutkut/tooltip-button";
 const LONG_PRESS_DELAY = 500;
-
-loadTooltipCss();
 
 const tooltip = tooltipModal(MODAL_ID);
 const floatingButton = tooltipButton(BUTTON_ID);
