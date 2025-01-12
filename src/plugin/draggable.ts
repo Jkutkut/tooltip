@@ -102,6 +102,9 @@ const makePersistentDraggable = (
     element.style["top"] = startY + "px";
   }
   const savePosition = () => {
+    if (element.style["display"] === "none") {
+      return;
+    }
     localStorage.setItem(
       elementIdKey,
       JSON.stringify({
