@@ -12,8 +12,6 @@ const tooltip = tooltipModal({
   id: MODAL_ID,
   initialPosition: {
     x: 10, y: 100,
-    // xAxis: "right", // TODO bug
-    // yAxis: "bottom", // TODO bug
     xAxis: "left",
     yAxis: "top",
   },
@@ -26,8 +24,8 @@ const floatingButton = tooltipButton({
   id: BUTTON_ID,
   initialPosition: {
     x: 10, y: 10,
-    xAxis: "left",
-    yAxis: "top",
+    xAxis: "right",
+    yAxis: "bottom",
   },
   onClick: () => {
     tooltip.show();

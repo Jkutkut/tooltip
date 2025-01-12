@@ -4,9 +4,8 @@ const makeDraggable = (
   element: HTMLElement,
   onDragEnd?: (e: MouseEvent) => void,
   onDragEndMobile?: (e: TouchEvent) => void,
-  xAxis: "right" | "left" = "right",
-  yAxis: "top" | "bottom" = "top",
 ) => {
+  const xAxis = "left", yAxis = "top";
   let offsetMouseObjX: number = 0;
   let offsetMouseObjY: number = 0;
   let x: number, y: number;
@@ -112,7 +111,6 @@ const makePersistentDraggable = (
   makeDraggable(
     element,
     savePosition, savePosition,
-    xAxis, yAxis
   );
 };
 
