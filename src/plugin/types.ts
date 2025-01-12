@@ -1,5 +1,6 @@
 type TooltipHtmlElement = HTMLElement & {
-  hide?: () => void
+  hide: () => void,
+  show: () => void,
 };
 
 type InitialPosition = {

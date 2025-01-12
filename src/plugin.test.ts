@@ -3,15 +3,16 @@ import {
   tooltipButton,
   loadTooltipModal,
 } from "./plugin/index";
+import type {TooltipHtmlElement} from "./plugin/types";
 
 const MODAL_ID = "jkutkut/tooltip-modal";
 const BUTTON_ID = "jkutkut/tooltip-button";
 const LONG_PRESS_DELAY = 500;
 
-const tooltip = tooltipModal(MODAL_ID);
-const floatingButton = tooltipButton(BUTTON_ID);
+const tooltip = tooltipModal(MODAL_ID) as TooltipHtmlElement;
+const floatingButton = tooltipButton(BUTTON_ID) as TooltipHtmlElement;
 floatingButton.addEventListener("click", () => {
-  tooltip.style.display = "flex";
+  tooltip.show();
   loadTooltipModal(tooltip, document.tmTools);
 });
 
@@ -27,16 +28,16 @@ floatingButton.addEventListener("mouseup", disableTooltipLongPress);
 floatingButton.addEventListener("mousemove", disableTooltipLongPress);
 floatingButton.addEventListener("mousedown", () => {
   __tooltipLongPressTimeout = setTimeout(() => {
-    tooltip.style.display = "none";
-    floatingButton.style.display = "none";
+    tooltip.hide();
+    floatingButton.hide();
   }, LONG_PRESS_DELAY);
 });
 floatingButton.addEventListener("touchend", disableTooltipLongPress, { passive: false });
 floatingButton.addEventListener("touchmove", disableTooltipLongPress, { passive: false });
 floatingButton.addEventListener("touchstart", () => {
   __tooltipLongPressTimeout = setTimeout(() => {
-    tooltip.style.display = "none";
-    floatingButton.style.display = "none";
+    tooltip.hide();
+    floatingButton.hide();
   }, LONG_PRESS_DELAY);
 }, { passive: false });
 

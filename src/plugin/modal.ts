@@ -1,7 +1,7 @@
 import {loadTooltipCss} from ".";
 import {makePersistentDraggable} from "./draggable";
 import {makePersistentScalableDraggable, scalableDraggableContainer} from "./scalable-draggable";
-import type {InitialPosition, ScalableDraggableOptions} from "./types";
+import type {InitialPosition, ScalableDraggableOptions, TooltipHtmlElement} from "./types";
 import {getElementByIdOr, newDOMElement} from "./utils";
 
 const tooltipModal = (
@@ -11,21 +11,25 @@ const tooltipModal = (
 ) => {
   loadTooltipCss();
   return getElementByIdOr(id, () => {
-    const onClose = (e: MouseEvent) => {
-      e.preventDefault();
-      modal.style.display = "none";
-      // TODO
-      return false;
-    };
-    const modal = newDOMElement("div", ["tooltip-modal"]);
+    const modal = newDOMElement("div", ["tooltip-modal"]) as TooltipHtmlElement;
     modal.id = id;
+    modal.hide = () => {
+      modal.style.display = "none";
+    };
+    modal.show = () => {
+      modal.style.display = "flex";
+    };
 
     const elements = [];
 
     {
       const dragHandle = newDOMElement("div", ["drag-handle"]);
       const closeBtn = newDOMElement("a", ["close"]);
-      closeBtn.addEventListener("click", onClose);
+      closeBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        modal.hide();
+        return false;
+      });
       dragHandle.appendChild(closeBtn);
       elements.push(dragHandle);
     }
