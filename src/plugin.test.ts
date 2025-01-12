@@ -15,7 +15,7 @@ const tooltip = tooltipModal(MODAL_ID);
 const floatingButton = tooltipButton(BUTTON_ID);
 floatingButton.addEventListener("click", () => {
   tooltip.style.display = "flex";
-  loadTooltipModal(tooltip, document.tmTools); // TODO load only the first time
+  loadTooltipModal(tooltip, document.tmTools);
 });
 
 // long press

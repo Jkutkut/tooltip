@@ -12,6 +12,14 @@ const SRC_CSS_FILE = `${SRC_DIRECTORY}/plugin.css`;
 const DIST_DIRECTORY = `${import.meta.dirname}/../dist`;
 const DIST_CSS_FILE = `${DIST_DIRECTORY}/plugin.min.css`;
 const DIST_CSS_OBJ_FILE = `${DIST_DIRECTORY}/plugin.min.css.o`;
+const SVG_FILES = [
+  "plugin/toolbox-logo.svg",
+];
+const SRC_SVG_FILES = SVG_FILES.map((file) => `${SRC_DIRECTORY}/${file}`);
+const DIST_SVG_FILES = SVG_FILES.map((file) => {
+  const fileName = file.split("/").pop();
+  return `${DIST_DIRECTORY}/${fileName}.o`;
+});
 
 const compressFile = (path: string) => {
   return lzCompressUtf16(fs.readFileSync(path, {
@@ -33,6 +41,14 @@ const compileCss = () => {
   console.debug("CSS compiled");
 };
 
+const compileSvgs = () => {
+  console.debug("Compiling svgs...");
+  for (let i = 0; i < SVG_FILES.length; i++) {
+    fs.writeFileSync(DIST_SVG_FILES[i], compressFile(SRC_SVG_FILES[i]));
+  }
+  console.debug("SVGs compiled");
+}
+
 const compileTs = async () => {
   console.debug("Building ts...");
   await Bun.build({
@@ -53,6 +69,7 @@ const compile = async () => {
     fs.rmSync("dist", { recursive: true, force: true });
   }
   fs.mkdirSync("dist");
+  compileSvgs();
   compileCss();
   await compileTs();
 };
