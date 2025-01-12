@@ -5,7 +5,6 @@ const makeDraggable = (
   onDragEnd?: (e: MouseEvent) => void,
   onDragEndMobile?: (e: TouchEvent) => void,
 ) => {
-  const xAxis = "left", yAxis = "top";
   let offsetMouseObjX: number = 0;
   let offsetMouseObjY: number = 0;
   let x: number, y: number;
@@ -18,8 +17,8 @@ const makeDraggable = (
   const handleDragElement = (eventX: number, eventY: number) => {
     x = eventX - offsetMouseObjX;
     y = eventY - offsetMouseObjY;
-    element.style[xAxis] = x + "px";
-    element.style[yAxis] = y + "px";
+    element.style["left"] = x + "px";
+    element.style["top"] = y + "px";
   };
 
   const handleCloseDragElement = () => {
@@ -27,8 +26,8 @@ const makeDraggable = (
     y = Math.max(0, element.offsetTop);
     x -= Math.max(element.offsetLeft + element.offsetWidth - window.innerWidth, 0);
     y -= Math.max(element.offsetTop + element.offsetHeight - window.innerHeight, 0);
-    element.style[xAxis] = x + "px";
-    element.style[yAxis] = y + "px";
+    element.style["left"] = x + "px";
+    element.style["top"] = y + "px";
   };
 
   const dragMouseDown = (e: MouseEvent) => {
@@ -92,19 +91,22 @@ const makePersistentDraggable = (
   const stored = localStorage.getItem(elementIdKey);
   if (stored) {
     const { x, y } = JSON.parse(stored);
-    element.style[xAxis] = x;
-    element.style[yAxis] = y;
+    element.style["left"] = x;
+    element.style["top"] = y;
   }
   else {
-    element.style[yAxis] = initialY + "px";
-    element.style[xAxis] = initialX + "px";
+    const bBox = element.getBoundingClientRect();
+    const startX = xAxis === "left" ? initialX : window.innerWidth - initialX - bBox.width;
+    const startY = yAxis === "top" ? initialY : window.innerHeight - initialY - bBox.height;
+    element.style["left"] = startX + "px";
+    element.style["top"] = startY + "px";
   }
   const savePosition = () => {
     localStorage.setItem(
       elementIdKey,
       JSON.stringify({
-        x: element.style[xAxis],
-        y: element.style[yAxis],
+        x: element.style["left"],
+        y: element.style["top"],
       })
     );
   };
