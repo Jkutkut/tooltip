@@ -48,16 +48,16 @@ const tooltipModal = ({
       scaleOptions?.h
     );
     modal.appendChild(scalableContent);
+    document.body.appendChild(modal);
 
     makePersistentScalableDraggable(
       modal,
       scaleOptions
     );
+    const { flush } = makePersistentDraggable(modal, initialPosition);
+    modal.flushPersitanceDraggablePosition = flush;
 
-    makePersistentDraggable(modal, initialPosition);
-    modal.style.display = "none";
-
-    document.body.appendChild(modal);
+    modal.hide();
     return modal;
   });
 };

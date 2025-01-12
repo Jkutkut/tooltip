@@ -1,6 +1,7 @@
 type TooltipHtmlElement = HTMLElement & {
   hide: () => void,
   show: () => void,
+  flushPersitanceDraggablePosition: () => void,
 };
 
 type InitialPosition = {

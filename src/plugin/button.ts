@@ -39,7 +39,8 @@ const tooltipButton = ({
     floatingButton.innerHTML = lzDecompressUtf16(logo) || "";
 
     document.body.appendChild(floatingButton);
-    makePersistentDraggable(floatingButton, initialPosition);
+    const { flush } = makePersistentDraggable(floatingButton, initialPosition);
+    floatingButton.flushPersitanceDraggablePosition = flush;
     return floatingButton;
   });
 };

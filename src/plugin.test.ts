@@ -11,8 +11,8 @@ const BUTTON_ID = "jkutkut/tooltip-button";
 const tooltip = tooltipModal({
   id: MODAL_ID,
   initialPosition: {
-    x: 10, y: 100,
-    xAxis: "left",
+    x: 10, y: 10,
+    xAxis: "right",
     yAxis: "top",
   },
   // scaleOptions: {
@@ -33,7 +33,9 @@ const floatingButton = tooltipButton({
   },
   onLongClick: () => {
     tooltip.hide();
+    tooltip.flushPersitanceDraggablePosition();
     floatingButton.hide();
+    floatingButton.flushPersitanceDraggablePosition();
   },
   longClickDelay: 500
 }) as TooltipHtmlElement;

@@ -117,6 +117,9 @@ const makePersistentDraggable = (
     element,
     savePosition, savePosition,
   );
+  return {
+    flush: () => localStorage.removeItem(elementIdKey),
+  };
 };
 
 export { makeDraggable, makePersistentDraggable };
