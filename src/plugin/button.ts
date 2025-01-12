@@ -4,7 +4,7 @@ import {lzDecompressUtf16} from "./lz";
 import type { InitialPosition, TooltipHtmlElement } from "./types";
 import { getElementByIdOr, newDOMElement } from "./utils";
 
-import logo from "@/../dist/toolbox-logo.svg.o" with { type: "text" };
+import logo from "d/toolbox-logo.svg.o" with { type: "text" };
 
 const DEF_LONG_PRESS_DELAY = 500;
 interface Props {
