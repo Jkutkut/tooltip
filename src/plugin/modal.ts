@@ -4,11 +4,17 @@ import {makePersistentScalableDraggable, scalableDraggableContainer} from "./sca
 import type {InitialPosition, ScalableDraggableOptions, TooltipHtmlElement} from "./types";
 import {getElementByIdOr, newDOMElement} from "./utils";
 
-const tooltipModal = (
-  id: string,
-  initialPosition?: InitialPosition,
-  scaleOptions?: ScalableDraggableOptions
-) => {
+interface Props {
+  id: string;
+  initialPosition?: InitialPosition;
+  scaleOptions?: ScalableDraggableOptions;
+};
+
+const tooltipModal = ({
+  id,
+  initialPosition,
+  scaleOptions
+}: Props) => {
   loadTooltipCss();
   return getElementByIdOr(id, () => {
     const modal = newDOMElement("div", ["tooltip-modal"]) as TooltipHtmlElement;
@@ -20,7 +26,7 @@ const tooltipModal = (
       modal.style.display = "flex";
     };
 
-    const elements = [];
+    const elements: HTMLElement[] = [];
 
     {
       const dragHandle = newDOMElement("div", ["drag-handle"]);

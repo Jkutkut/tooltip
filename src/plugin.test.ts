@@ -8,9 +8,27 @@ import type {TooltipHtmlElement} from "./plugin/types";
 const MODAL_ID = "jkutkut/tooltip-modal";
 const BUTTON_ID = "jkutkut/tooltip-button";
 
-const tooltip = tooltipModal(MODAL_ID) as TooltipHtmlElement;
+const tooltip = tooltipModal({
+  id: MODAL_ID,
+  initialPosition: {
+    x: 10, y: 100,
+    // xAxis: "right", // TODO bug
+    // yAxis: "bottom", // TODO bug
+    xAxis: "left",
+    yAxis: "top",
+  },
+  // scaleOptions: {
+  //   w: 200,
+  //   h: 200,
+  // }
+}) as TooltipHtmlElement;
 const floatingButton = tooltipButton({
   id: BUTTON_ID,
+  initialPosition: {
+    x: 10, y: 10,
+    xAxis: "left",
+    yAxis: "top",
+  },
   onClick: () => {
     tooltip.show();
     loadTooltipModal(tooltip, document.tmTools);
