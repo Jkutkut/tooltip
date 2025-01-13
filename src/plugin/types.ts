@@ -4,6 +4,10 @@ type TooltipHtmlElement = HTMLElement & {
   flushPersitanceDraggablePosition: () => void,
 };
 
+type TooltipModalHtmlElement = TooltipHtmlElement & {
+  flushPersitanceScalableDraggable: () => void,
+};
+
 type InitialPosition = {
   x?: number,
   y?: number,
@@ -17,4 +21,4 @@ type ScalableDraggableOptions = {
   onDragEnd?: (e: MouseEvent) => void,
 };
 
-export type { TooltipHtmlElement, InitialPosition, ScalableDraggableOptions };
+export type { TooltipHtmlElement, TooltipModalHtmlElement, InitialPosition, ScalableDraggableOptions };

@@ -142,6 +142,9 @@ const makePersistentScalableDraggable = (
   }
 
   const savePosition = (_) => {
+    if (element.style.display === "none") {
+      return;
+    }
     const { width: w, height: h } = content.getBoundingClientRect();
     localStorage.setItem(elementIdKey, JSON.stringify({
       w: Math.max(Math.floor(w), options?.w || DEF_WIDTH),
@@ -150,6 +153,9 @@ const makePersistentScalableDraggable = (
   };
 
   makeScalableDraggable(element, options, savePosition, savePosition);
+  return {
+    flush: () => localStorage.removeItem(elementIdKey),
+  };
 };
 
 export {

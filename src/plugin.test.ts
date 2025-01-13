@@ -3,7 +3,7 @@ import {
   tooltipButton,
   loadTooltipModal,
 } from "./plugin/index";
-import type {TooltipHtmlElement} from "./plugin/types";
+import type {TooltipHtmlElement, TooltipModalHtmlElement} from "./plugin/types";
 
 const MODAL_ID = "jkutkut/tooltip-modal";
 const BUTTON_ID = "jkutkut/tooltip-button";
@@ -19,7 +19,7 @@ const tooltip = tooltipModal({
   //   w: 200,
   //   h: 200,
   // }
-}) as TooltipHtmlElement;
+}) as TooltipModalHtmlElement;
 const floatingButton = tooltipButton({
   id: BUTTON_ID,
   initialPosition: {
@@ -34,6 +34,7 @@ const floatingButton = tooltipButton({
   onLongClick: () => {
     tooltip.hide();
     tooltip.flushPersitanceDraggablePosition();
+    tooltip.flushPersitanceScalableDraggable();
     floatingButton.hide();
     floatingButton.flushPersitanceDraggablePosition();
   },

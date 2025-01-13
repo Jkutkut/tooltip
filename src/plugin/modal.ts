@@ -1,7 +1,7 @@
 import {loadTooltipCss} from ".";
 import {makePersistentDraggable} from "./draggable";
 import {makePersistentScalableDraggable, scalableDraggableContainer} from "./scalable-draggable";
-import type {InitialPosition, ScalableDraggableOptions, TooltipHtmlElement} from "./types";
+import type {InitialPosition, ScalableDraggableOptions, TooltipModalHtmlElement} from "./types";
 import {getElementByIdOr, newDOMElement} from "./utils";
 
 interface Props {
@@ -17,7 +17,7 @@ const tooltipModal = ({
 }: Props) => {
   loadTooltipCss();
   return getElementByIdOr(id, () => {
-    const modal = newDOMElement("div", ["tooltip-modal"]) as TooltipHtmlElement;
+    const modal = newDOMElement("div", ["tooltip-modal"]) as TooltipModalHtmlElement;
     modal.id = id;
     modal.hide = () => {
       modal.style.display = "none";
@@ -50,10 +50,11 @@ const tooltipModal = ({
     modal.appendChild(scalableContent);
     document.body.appendChild(modal);
 
-    makePersistentScalableDraggable(
+    const { flush: flushScalable } = makePersistentScalableDraggable(
       modal,
       scaleOptions
     );
+    modal.flushPersitanceScalableDraggable = flushScalable;
     const { flush } = makePersistentDraggable(modal, initialPosition);
     modal.flushPersitanceDraggablePosition = flush;
 
